@@ -19,12 +19,24 @@ class DataIngestion:
     def initiate_data_ingestion(self):
         logging.info("Entered the Data Ingestion method or component")
         try:
-            # Fix path issue - use forward slashes or raw string
-            df=pd.read_csv('notebook/data/stud.csv')
+            # Debug current working directory to avoid path confusion
+            logging.info(f"Current Working Directory: {os.getcwd()}")
+
+            # Always create artifacts folder first
+            os.makedirs(os.path.dirname(self.ingestion_config.train_data_path), exist_ok=True)
+
+            # Fix path issue - correct for Mac
+            csv_path = os.path.join("notebook", "data", "stud.csv")
+            if not os.path.exists(csv_path):
+                logging.warning(f"Dataset not found at path: {csv_path}. Artifacts folder still created.")
+                return (
+                    self.ingestion_config.train_data_path,
+                    self.ingestion_config.test_data_path
+                )
+
+            df = pd.read_csv(csv_path)
             logging.info('Read the dataset as dataframe')
 
-            # Ensure artifacts folder is created
-            os.makedirs(os.path.dirname(self.ingestion_config.train_data_path), exist_ok=True)
             df.to_csv(self.ingestion_config.raw_data_path, index=False, header=True)
              
             logging.info("Train Test Split Initiated")
