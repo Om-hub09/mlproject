@@ -3,3 +3,5 @@ numpy
 seaborn
 #-e .
 matplotlib
+dill
+dataclasses
